@@ -57,22 +57,28 @@ export default function Header({
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b border-border">
+      {/* Top logo banner */}
+      <div className="bg-white flex justify-center items-center py-3 border-b border-border/50">
+        <Link to="/" data-ocid="nav.link">
+          <img
+            src="/assets/uploads/IMG_20260322_110511-4-1.jpg"
+            alt="Tirupati Tractors"
+            className="h-20 w-auto object-contain"
+          />
+        </Link>
+      </div>
+
       {/* Utility strip */}
       <div className="bg-primary text-primary-foreground text-xs py-1 px-4 text-right">
         Authorised Swaraj Tractor Dealer — Balwadi, Madhya Pradesh
       </div>
-      <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-16 gap-4">
-        {/* Logo */}
+      <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-14 gap-4">
+        {/* Brand name */}
         <Link
           to="/"
           className="flex items-center gap-2 shrink-0"
           data-ocid="nav.link"
         >
-          <img
-            src="/assets/uploads/IMG_20260322_110511-4-1.jpg"
-            alt="Tirupati Tractors Logo"
-            className="h-10 w-10 rounded-full object-cover border-2 border-primary"
-          />
           <div>
             <span className="font-display font-bold text-primary text-lg leading-tight block">
               Tirupati Tractors
@@ -106,73 +112,82 @@ export default function Header({
         </nav>
 
         {/* Right: Search + Phone + Auth */}
-        <div className="flex items-center gap-2">
-          <div className="relative hidden lg:block">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Search"
-              className="pl-8 h-8 w-32 text-sm"
-              value={searchValue}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              data-ocid="header.search_input"
-            />
+        <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-2">
+            <div className="relative hidden lg:block">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Search"
+                className="pl-8 h-8 w-32 text-sm"
+                value={searchValue}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                data-ocid="header.search_input"
+              />
+            </div>
+
+            <a href="tel:+919424569451" className="hidden sm:flex">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 rounded-full border-primary text-primary hover:bg-muted"
+                data-ocid="header.phone_button"
+              >
+                <Phone className="h-3.5 w-3.5" />
+              </Button>
+            </a>
+
+            {isAuthenticated && userProfile && (
+              <span className="hidden lg:flex items-center gap-1 text-xs text-muted-foreground">
+                <User className="h-3.5 w-3.5" />
+                {userProfile.name}
+              </span>
+            )}
+
+            <Button
+              variant={isAuthenticated ? "outline" : "default"}
+              size="sm"
+              className="h-8 text-xs"
+              onClick={handleAuth}
+              disabled={loginStatus === "logging-in"}
+              data-ocid="header.login_button"
+            >
+              {loginStatus === "logging-in" ? (
+                "Logging in..."
+              ) : isAuthenticated ? (
+                <>
+                  <LogOut className="h-3.5 w-3.5 mr-1" />
+                  Logout
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-3.5 w-3.5 mr-1" />
+                  Login
+                </>
+              )}
+            </Button>
+
+            {/* Mobile menu toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden h-8 w-8"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              data-ocid="nav.toggle"
+            >
+              {mobileOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
           </div>
 
-          <a href="tel:+919424569451" className="hidden sm:flex">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-full border-primary text-primary hover:bg-muted"
-              data-ocid="header.phone_button"
-            >
-              <Phone className="h-3.5 w-3.5" />
-            </Button>
-          </a>
-
-          {isAuthenticated && userProfile && (
-            <span className="hidden lg:flex items-center gap-1 text-xs text-muted-foreground">
-              <User className="h-3.5 w-3.5" />
-              {userProfile.name}
-            </span>
-          )}
-
-          <Button
-            variant={isAuthenticated ? "outline" : "default"}
-            size="sm"
-            className="h-8 text-xs"
-            onClick={handleAuth}
-            disabled={loginStatus === "logging-in"}
-            data-ocid="header.login_button"
-          >
-            {loginStatus === "logging-in" ? (
-              "Logging in..."
-            ) : isAuthenticated ? (
-              <>
-                <LogOut className="h-3.5 w-3.5 mr-1" />
-                Logout
-              </>
-            ) : (
-              <>
-                <LogIn className="h-3.5 w-3.5 mr-1" />
-                Login
-              </>
-            )}
-          </Button>
-
-          {/* Mobile menu toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden h-8 w-8"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            data-ocid="nav.toggle"
-          >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </Button>
+          {/* Image below login/logout button */}
+          <img
+            src="/assets/uploads/IMG_20260322_110511-5-2.jpg"
+            alt="Tirupati Tractors"
+            className="h-8 w-auto object-contain hidden sm:block"
+          />
         </div>
       </div>
 
