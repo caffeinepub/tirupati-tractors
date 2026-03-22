@@ -1,8 +1,10 @@
 import {
   Award,
   Clock,
+  Instagram,
   Mail,
   MapPin,
+  MessageCircle,
   Phone,
   Tractor,
   Users,
@@ -149,19 +151,30 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="bg-white/5 rounded-lg p-5 flex flex-col justify-center">
-            <h3 className="font-semibold text-white mb-3">Send us a message</h3>
+          <div className="bg-white/5 rounded-lg p-5 flex flex-col justify-center gap-3">
+            <h3 className="font-semibold text-white mb-1">Connect With Us</h3>
             <a
               href="https://wa.me/919424569451?text=Hello%2C%20I%27m%20interested%20in%20your%20tractors"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gold text-gold-foreground text-sm font-medium px-5 py-2.5 rounded text-center hover:bg-gold/90 transition-colors"
+              className="flex items-center justify-center gap-2 bg-gold text-gold-foreground text-sm font-medium px-5 py-2.5 rounded hover:bg-gold/90 transition-colors"
               data-ocid="contact.primary_button"
             >
+              <MessageCircle className="h-4 w-4" />
               WhatsApp Us
             </a>
-            <p className="text-xs text-footer-foreground/50 mt-3 text-center">
-              Quick response guaranteed!
+            <a
+              href="https://instagram.com/tirupatitractors"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-sm font-medium px-5 py-2.5 rounded hover:opacity-90 transition-opacity"
+              data-ocid="contact.secondary_button"
+            >
+              <Instagram className="h-4 w-4" />
+              Follow on Instagram
+            </a>
+            <p className="text-xs text-footer-foreground/50 text-center">
+              @tirupatitractors
             </p>
           </div>
         </div>

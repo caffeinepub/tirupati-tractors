@@ -33,7 +33,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { Product, ProductEntry, ShowroomInfo } from "../backend.d";
 import ProductForm from "../components/ProductForm";
@@ -48,6 +48,7 @@ import {
 } from "../hooks/useQueries";
 
 const ADMIN_PASSCODE = "515151";
+const KNOWN_MODELS = ["735 FE", "744 XT", "744 FE", "855 FE", "855 XM"];
 
 export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(
@@ -70,11 +71,21 @@ export default function AdminPage() {
   const [deleteTarget, setDeleteTarget] = useState<ProductEntry | null>(null);
   const [showroomForm, setShowroomForm] = useState<ShowroomInfo | null>(null);
 
-  // Use real backend products with real IDs; fall back to sample data only when backend has none
-  const products: ProductEntry[] =
-    backendProducts && backendProducts.length > 0
-      ? backendProducts
-      : SAMPLE_PRODUCTS;
+  // Always show exactly the 5 known models, merging backend edits if available
+  const products: ProductEntry[] = useMemo(() => {
+    return SAMPLE_PRODUCTS.map((sample) => {
+      if (backendProducts && backendProducts.length > 0) {
+        const match = backendProducts.find((bp) => bp.model === sample.model);
+        if (match) {
+          return {
+            ...match,
+            imageUrl: match.imageUrl || sample.imageUrl,
+          };
+        }
+      }
+      return sample;
+    }).filter((p) => KNOWN_MODELS.includes(p.model));
+  }, [backendProducts]);
 
   const handlePasscodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -318,9 +329,6 @@ export default function AdminPage() {
                     <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden sm:table-cell">
                       HP
                     </th>
-                    <th className="text-left px-4 py-3 font-medium text-muted-foreground hidden sm:table-cell">
-                      Price (Lakh ₹)
-                    </th>
                     <th className="text-left px-4 py-3 font-medium text-muted-foreground">
                       Status
                     </th>
@@ -367,11 +375,6 @@ export default function AdminPage() {
                       <td className="px-4 py-3 hidden sm:table-cell text-muted-foreground">
                         {Number(p.hpMin)}–{Number(p.hpMax)} HP
                       </td>
-                      <td className="px-4 py-3 hidden sm:table-cell">
-                        <span className="text-primary font-medium">
-                          ₹{p.priceMin}–{p.priceMax}L
-                        </span>
-                      </td>
                       <td className="px-4 py-3">
                         {p.isAvailable ? (
                           <span className="flex items-center gap-1 text-green-600 text-xs">
@@ -410,7 +413,7 @@ export default function AdminPage() {
 
                   {/* Placeholder row */}
                   <tr className="border-t border-dashed border-border">
-                    <td colSpan={6} className="px-4 py-4">
+                    <td colSpan={5} className="px-4 py-4">
                       <button
                         type="button"
                         onClick={() => setShowForm(true)}

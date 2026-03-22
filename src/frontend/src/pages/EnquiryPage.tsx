@@ -11,6 +11,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   CheckCircle,
+  Instagram,
   Loader2,
   MessageCircle,
   SendHorizonal,
@@ -22,6 +23,7 @@ import { TRACTOR_MODELS } from "../data/products";
 
 const WA_LINK =
   "https://wa.me/919424569451?text=Hi%2C%20I%20am%20interested%20in%20a%20Swaraj%20tractor.%20Please%20share%20the%20price%20quote.";
+const IG_LINK = "https://instagram.com/tirupatitractors";
 
 export default function EnquiryPage() {
   const [form, setForm] = useState({
@@ -115,6 +117,23 @@ export default function EnquiryPage() {
               <p className="text-xs text-primary-foreground/70 mt-1">
                 Mon – Sat, 9 AM to 7 PM
               </p>
+            </a>
+
+            {/* Instagram link */}
+            <a
+              href={IG_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-500 rounded-xl p-5 text-white hover:opacity-90 transition-opacity group"
+              data-ocid="enquiry.secondary_button"
+            >
+              <div className="bg-white/20 rounded-full p-2">
+                <Instagram className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-bold text-sm">Follow on Instagram</p>
+                <p className="text-xs text-white/80">@tirupatitractors</p>
+              </div>
             </a>
 
             <div className="bg-primary/5 border border-primary/20 rounded-xl p-6">

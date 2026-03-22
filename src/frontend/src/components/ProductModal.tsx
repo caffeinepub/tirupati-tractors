@@ -89,20 +89,11 @@ export default function ProductModal({
             {product.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-muted rounded-lg p-3">
-              <p className="text-xs text-muted-foreground">HP Range</p>
-              <p className="font-bold text-foreground">
-                {Number(product.hpMin)}–{Number(product.hpMax)} HP
-              </p>
-            </div>
-            <div className="bg-muted rounded-lg p-3">
-              <p className="text-xs text-muted-foreground">Price Range</p>
-              <p className="font-bold text-primary">
-                ₹{product.priceMin.toFixed(1)}–{product.priceMax.toFixed(1)}{" "}
-                Lakh*
-              </p>
-            </div>
+          <div className="bg-muted rounded-lg p-3 mb-4">
+            <p className="text-xs text-muted-foreground">HP Range</p>
+            <p className="font-bold text-foreground">
+              {Number(product.hpMin)}–{Number(product.hpMax)} HP
+            </p>
           </div>
 
           {product.features.length > 0 && (

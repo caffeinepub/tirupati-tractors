@@ -3,6 +3,7 @@ import {
   Instagram,
   Mail,
   MapPin,
+  MessageCircle,
   Phone,
   Tractor,
   Youtube,
@@ -119,22 +120,34 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-white/10 hover:bg-primary p-2 rounded-full transition-colors"
+                aria-label="Facebook"
               >
                 <Facebook className="h-4 w-4" />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://instagram.com/tirupatitractors"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-primary p-2 rounded-full transition-colors"
+                className="bg-white/10 hover:bg-pink-500 p-2 rounded-full transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://wa.me/919424569451"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 hover:bg-green-500 p-2 rounded-full transition-colors"
+                aria-label="WhatsApp"
+              >
+                <MessageCircle className="h-4 w-4" />
               </a>
               <a
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white/10 hover:bg-primary p-2 rounded-full transition-colors"
+                className="bg-white/10 hover:bg-red-600 p-2 rounded-full transition-colors"
+                aria-label="YouTube"
               >
                 <Youtube className="h-4 w-4" />
               </a>

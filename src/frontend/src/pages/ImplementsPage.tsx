@@ -3,6 +3,21 @@ import { motion } from "motion/react";
 
 const IMPLEMENTS = [
   {
+    name: "Shaktiman Regular Plus Rotavator",
+    model: "Regular Plus Series",
+    img: "/assets/uploads/Shaktiman_Regular_Plus_Series_Image_2-1-1-1.png",
+    category: "Tillage",
+    desc: "Heavy-duty rotavator for fine seedbed preparation. Suitable for all soil types with robust blade configuration and high performance.",
+    features: [
+      "Heavy Duty Build",
+      "PTO Driven",
+      "Gear Drive",
+      "Adjustable Depth",
+      "3-Point Linkage",
+      "All Soil Types",
+    ],
+  },
+  {
     name: "Swaraj Rotavator",
     model: "RMB-145",
     img: "/assets/generated/implement-rotavator.dim_600x400.jpg",
@@ -16,7 +31,6 @@ const IMPLEMENTS = [
       "Side Drive",
       "3-Point Linkage",
     ],
-    price: "0.85",
   },
   {
     name: "Cultivator 9-Tyne",
@@ -32,7 +46,6 @@ const IMPLEMENTS = [
       "3-Point Linkage",
       "All-Terrain",
     ],
-    price: "0.45",
   },
   {
     name: "Disc Plough (3-Disc)",
@@ -48,7 +61,6 @@ const IMPLEMENTS = [
       "Deep Ploughing",
       "3-Point Linkage",
     ],
-    price: "0.60",
   },
   {
     name: "Paddy Weeder",
@@ -64,7 +76,6 @@ const IMPLEMENTS = [
       "High Efficiency",
       "Manual Guided",
     ],
-    price: "0.30",
   },
   {
     name: "Box Blade",
@@ -80,7 +91,6 @@ const IMPLEMENTS = [
       "3-Point Linkage",
       "Robust Steel",
     ],
-    price: "0.50",
   },
   {
     name: "Ridger",
@@ -96,7 +106,6 @@ const IMPLEMENTS = [
       "Low Draft",
       "Easy Maintenance",
     ],
-    price: "0.40",
   },
 ];
 
@@ -154,11 +163,7 @@ export default function ImplementsPage() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-auto flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground">Starting from</p>
-                  <p className="font-bold text-primary">₹{impl.price} Lakh*</p>
-                </div>
+              <div className="mt-auto flex items-center justify-end">
                 <a
                   href={WA_IMPL_LINK}
                   target="_blank"

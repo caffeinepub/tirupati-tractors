@@ -114,12 +114,6 @@ export default function ProductCard({
         )}
 
         <div className="mt-auto">
-          <p className="text-xs text-muted-foreground mb-1">Starting from</p>
-          <p className="text-lg font-bold text-primary">
-            ₹{product.priceMin.toFixed(1)} Lakh
-            <span className="text-xs font-normal text-muted-foreground">*</span>
-          </p>
-
           <div className="flex gap-2 mt-3">
             <Button
               variant="outline"

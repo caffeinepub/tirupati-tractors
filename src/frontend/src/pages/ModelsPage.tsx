@@ -10,6 +10,7 @@ import ProductModal from "../components/ProductModal";
 import { SAMPLE_PRODUCTS } from "../data/products";
 import { useGetAllProducts } from "../hooks/useQueries";
 
+const KNOWN_MODELS = ["735 FE", "744 XT", "744 FE", "855 FE", "855 XM"];
 const CATEGORIES = ["All", "Tractors", "Mini Tractors", "Heavy Duty"];
 
 export default function ModelsPage() {
@@ -19,8 +20,18 @@ export default function ModelsPage() {
   const [selected, setSelected] = useState<ProductEntry | null>(null);
 
   const products: ProductEntry[] = useMemo(() => {
-    if (backendProducts && backendProducts.length > 0) return backendProducts;
-    return SAMPLE_PRODUCTS;
+    return SAMPLE_PRODUCTS.map((sample) => {
+      if (backendProducts && backendProducts.length > 0) {
+        const match = backendProducts.find((bp) => bp.model === sample.model);
+        if (match) {
+          return {
+            ...match,
+            imageUrl: match.imageUrl || sample.imageUrl,
+          };
+        }
+      }
+      return sample;
+    }).filter((p) => KNOWN_MODELS.includes(p.model));
   }, [backendProducts]);
 
   const filtered = useMemo(() => {

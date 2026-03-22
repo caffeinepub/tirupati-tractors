@@ -215,56 +215,6 @@ export default function ProductForm({
         </div>
       </div>
 
-      <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-        <p className="text-sm font-semibold text-foreground">
-          💰 Price Range (in Lakh ₹)
-        </p>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Starting Price (Min) *</Label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                ₹
-              </span>
-              <Input
-                type="number"
-                step="0.1"
-                min="0"
-                value={form.priceMin}
-                onChange={(e) =>
-                  set("priceMin", Number.parseFloat(e.target.value) || 0)
-                }
-                className="pl-7"
-                placeholder="e.g. 7.5"
-                data-ocid="product_form.input"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Lakh*</p>
-          </div>
-          <div>
-            <Label>Maximum Price (Max)</Label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                ₹
-              </span>
-              <Input
-                type="number"
-                step="0.1"
-                min="0"
-                value={form.priceMax}
-                onChange={(e) =>
-                  set("priceMax", Number.parseFloat(e.target.value) || 0)
-                }
-                className="pl-7"
-                placeholder="e.g. 8.5"
-                data-ocid="product_form.input"
-              />
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">Lakh*</p>
-          </div>
-        </div>
-      </div>
-
       {/* Image Upload */}
       <div>
         <Label>Product Image</Label>
