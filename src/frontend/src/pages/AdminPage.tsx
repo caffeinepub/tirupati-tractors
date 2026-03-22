@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import type { Product, ShowroomInfo } from "../backend.d";
 import ProductForm from "../components/ProductForm";
 import { SAMPLE_PRODUCTS } from "../data/products";
+import { storeAdminEmail } from "../hooks/useActor";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useAddProduct,
@@ -113,6 +114,8 @@ export default function AdminPage() {
       try {
         const result = await claimAdmin.mutateAsync(claimEmail.trim());
         if (result === true) {
+          // Persist email so admin role is re-claimed on every reload
+          storeAdminEmail(claimEmail.trim());
           toast.success("Admin access granted! Reloading...");
           setTimeout(() => window.location.reload(), 1000);
         } else {
