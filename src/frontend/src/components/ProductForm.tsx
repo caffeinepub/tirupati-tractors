@@ -10,9 +10,10 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { ImagePlus, Loader2, Plus, Trash2, Upload } from "lucide-react";
+import { useRef, useState } from "react";
 import type { Product } from "../backend.d";
+import { useImageUpload } from "../hooks/useImageUpload";
 
 const CATEGORIES = [
   "Tractors",
@@ -51,6 +52,8 @@ export default function ProductForm({
 }: ProductFormProps) {
   const [form, setForm] = useState<Product>(initial ?? blank);
   const [newFeature, setNewFeature] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadImage, isUploading, uploadProgress } = useImageUpload();
 
   const set = (key: keyof Product, value: any) =>
     setForm((p) => ({ ...p, [key]: value }));
@@ -77,6 +80,18 @@ export default function ProductForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(form);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const url = await uploadImage(file);
+      set("imageUrl", url);
+    } catch {
+      // silent — progress resets automatically
+    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   return (
@@ -120,7 +135,6 @@ export default function ProductForm({
         </Select>
       </div>
 
-      {/* Description — intentionally large for admin to fill */}
       <div>
         <Label className="flex items-center gap-2">
           Description
@@ -132,7 +146,7 @@ export default function ProductForm({
           value={form.description}
           onChange={(e) => set("description", e.target.value)}
           rows={5}
-          placeholder="Add product description here — highlight key benefits, use cases, and what makes this model stand out for farmers..."
+          placeholder="Add product description here..."
           className="resize-y"
           data-ocid="product_form.textarea"
         />
@@ -159,7 +173,6 @@ export default function ProductForm({
         </div>
       </div>
 
-      {/* Price — clearly labeled and prominent */}
       <div className="bg-muted/50 rounded-lg p-4 space-y-3">
         <p className="text-sm font-semibold text-foreground">
           💰 Price Range (in Lakh ₹)
@@ -210,23 +223,73 @@ export default function ProductForm({
         </div>
       </div>
 
-      {/* Image URL */}
+      {/* Image Upload */}
       <div>
-        <Label>Product Image URL</Label>
-        <Input
-          type="url"
-          value={form.imageUrl}
-          onChange={(e) => set("imageUrl", e.target.value)}
-          placeholder="https://example.com/image.jpg"
-          data-ocid="product_form.input"
-        />
-        {form.imageUrl && (
-          <img
-            src={form.imageUrl}
-            alt="preview"
-            className="mt-2 h-24 object-cover rounded"
-          />
-        )}
+        <Label>Product Image</Label>
+        <div className="mt-1.5 flex items-start gap-3">
+          <div className="shrink-0">
+            {form.imageUrl ? (
+              <img
+                src={form.imageUrl}
+                alt="preview"
+                className="h-20 w-28 object-cover rounded-lg border border-border"
+              />
+            ) : (
+              <div className="h-20 w-28 rounded-lg border border-dashed border-border bg-muted flex items-center justify-center">
+                <ImagePlus className="h-6 w-6 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 space-y-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-2"
+              data-ocid="product_form.upload_button"
+            >
+              {isUploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="h-4 w-4" />
+              )}
+              {isUploading ? "Uploading..." : "Upload Image"}
+            </Button>
+
+            {isUploading && uploadProgress !== null && (
+              <div className="w-full" data-ocid="product_form.loading_state">
+                <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-200"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {uploadProgress}% uploaded
+                </p>
+              </div>
+            )}
+
+            <Input
+              type="url"
+              value={form.imageUrl}
+              onChange={(e) => set("imageUrl", e.target.value)}
+              placeholder="Or paste image URL directly"
+              className="text-xs"
+              data-ocid="product_form.input"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Features */}
@@ -290,7 +353,7 @@ export default function ProductForm({
         </Button>
         <Button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || isUploading}
           className="flex-1 bg-primary text-primary-foreground"
           data-ocid="product_form.submit_button"
         >

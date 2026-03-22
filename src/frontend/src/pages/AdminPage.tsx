@@ -40,6 +40,7 @@ import { SAMPLE_PRODUCTS } from "../data/products";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useAddProduct,
+  useClaimAdminByEmail,
   useDeleteProduct,
   useGetAllProducts,
   useGetShowroomInfo,
@@ -61,11 +62,13 @@ export default function AdminPage() {
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
   const updateShowroom = useUpdateShowroomInfo();
+  const claimAdmin = useClaimAdminByEmail();
 
   const [showForm, setShowForm] = useState(false);
   const [editProduct, setEditProduct] = useState<ProductWithId | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProductWithId | null>(null);
   const [showroomForm, setShowroomForm] = useState<ShowroomInfo | null>(null);
+  const [claimEmail, setClaimEmail] = useState("");
 
   const products = (
     backendProducts && backendProducts.length > 0
@@ -104,18 +107,72 @@ export default function AdminPage() {
   }
 
   if (!isAdmin) {
+    const handleClaimAdmin = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!claimEmail.trim()) return;
+      try {
+        const result = await claimAdmin.mutateAsync(claimEmail.trim());
+        if (result === true) {
+          toast.success("Admin access granted! Reloading...");
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          toast.error("Email not recognized as admin.");
+        }
+      } catch {
+        toast.error("Failed to claim admin access.");
+      }
+    };
+
     return (
       <div
-        className="max-w-[600px] mx-auto px-4 py-20 text-center"
+        className="max-w-[500px] mx-auto px-4 py-20 text-center"
         data-ocid="admin.panel"
       >
-        <div className="bg-card rounded-xl border border-border p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-card rounded-xl border border-border p-10"
+        >
           <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-display font-bold mb-2">Access Denied</h2>
-          <p className="text-muted-foreground text-sm">
-            You do not have admin privileges. Contact the showroom owner.
+          <p className="text-muted-foreground text-sm mb-6">
+            If you have admin access, enter your admin email below to activate
+            it.
           </p>
-        </div>
+
+          <form onSubmit={handleClaimAdmin} className="text-left space-y-3">
+            <div>
+              <Label htmlFor="claim-email" className="text-sm font-medium">
+                Admin Email
+              </Label>
+              <Input
+                id="claim-email"
+                type="email"
+                placeholder="Enter your admin email"
+                value={claimEmail}
+                onChange={(e) => setClaimEmail(e.target.value)}
+                disabled={claimAdmin.isPending}
+                className="mt-1"
+                data-ocid="admin.input"
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={claimAdmin.isPending || !claimEmail.trim()}
+              className="w-full bg-primary text-primary-foreground hover:bg-secondary font-semibold"
+              data-ocid="admin.submit_button"
+            >
+              {claimAdmin.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                "Claim Admin Access"
+              )}
+            </Button>
+          </form>
+        </motion.div>
       </div>
     );
   }
@@ -165,7 +222,7 @@ export default function AdminPage() {
 
   const currentShowroom: ShowroomInfo = showroom || {
     name: "Tirupati Tractors",
-    address: "NH-40, Renigunta Road, Tirupati — 517501, Andhra Pradesh",
+    address: "Sendhwa Varla Road, Balwadi, Madhya Pradesh",
     phone: "+91 98765 43210",
     email: "info@tirupatitractors.in",
   };
@@ -373,7 +430,7 @@ export default function AdminPage() {
                           <Plus className="h-3.5 w-3.5" />
                         </span>
                         <span>
-                          Click ‘Add New Tractor Model’ to add your next model
+                          Click 'Add New Tractor Model' to add your next model
                           here
                         </span>
                       </button>

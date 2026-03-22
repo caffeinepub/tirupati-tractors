@@ -21,9 +21,9 @@ export default function AboutPage() {
 
   const info = showroom || {
     name: "Tirupati Tractors",
-    address: "NH-40, Renigunta Road, Tirupati — 517501, Andhra Pradesh",
-    phone: "+91 98765 43210",
-    email: "info@tirupatitractors.in",
+    address: "Balwadi - Sendhwa, Madhya Pradesh",
+    phone: "+91 94245 69451",
+    email: "Tirupatitractor551@gmail.com",
   };
 
   return (
@@ -38,7 +38,7 @@ export default function AboutPage() {
         </h1>
         <p className="text-muted-foreground max-w-2xl leading-relaxed">
           Tirupati Tractors is an authorised dealer of Swaraj Tractors in
-          Tirupati, Andhra Pradesh. With over 15 years of experience, we have
+          Sendhwa, Madhya Pradesh. With over 15 years of experience, we have
           been empowering farmers with the best agricultural machinery.
         </p>
       </motion.div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
         <p className="text-muted-foreground leading-relaxed mb-3">
           Founded in 2009, Tirupati Tractors began as a small dealership with a
           vision to bring the best agricultural solutions to the farmers of
-          Andhra Pradesh. Over the years, we have grown to become one of the
+          Madhya Pradesh. Over the years, we have grown to become one of the
           most trusted Swaraj dealerships in the region.
         </p>
         <p className="text-muted-foreground leading-relaxed">
@@ -152,7 +152,7 @@ export default function AboutPage() {
           <div className="bg-white/5 rounded-lg p-5 flex flex-col justify-center">
             <h3 className="font-semibold text-white mb-3">Send us a message</h3>
             <a
-              href="https://wa.me/919876543210?text=Hello%2C%20I%27m%20interested%20in%20your%20tractors"
+              href="https://wa.me/919424569451?text=Hello%2C%20I%27m%20interested%20in%20your%20tractors"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gold text-gold-foreground text-sm font-medium px-5 py-2.5 rounded text-center hover:bg-gold/90 transition-colors"

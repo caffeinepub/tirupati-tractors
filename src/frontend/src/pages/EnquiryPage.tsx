@@ -71,7 +71,7 @@ export default function EnquiryPage() {
             <ul className="space-y-3 text-sm">
               {[
                 "Authorised Swaraj Dealer — Genuine Parts & Service",
-                "Best prices in Andhra Pradesh",
+                "Best prices in Madhya Pradesh",
                 "Finance options available",
                 "Free demo at your farm",
                 "After-sales service support",

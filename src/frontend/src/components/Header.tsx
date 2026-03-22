@@ -2,16 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
-import {
-  LogIn,
-  LogOut,
-  Menu,
-  Phone,
-  Search,
-  Tractor,
-  User,
-  X,
-} from "lucide-react";
+import { LogIn, LogOut, Menu, Phone, Search, User, X } from "lucide-react";
 import { useState } from "react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import { useGetCallerUserProfile, useIsAdmin } from "../hooks/useQueries";
@@ -68,7 +59,7 @@ export default function Header({
     <header className="bg-white shadow-sm sticky top-0 z-40 border-b border-border">
       {/* Utility strip */}
       <div className="bg-primary text-primary-foreground text-xs py-1 px-4 text-right">
-        Authorised Swaraj Tractor Dealer — Tirupati, Andhra Pradesh
+        Authorised Swaraj Tractor Dealer — Balwadi, Madhya Pradesh
       </div>
       <div className="max-w-[1200px] mx-auto px-4 flex items-center justify-between h-16 gap-4">
         {/* Logo */}
@@ -77,15 +68,17 @@ export default function Header({
           className="flex items-center gap-2 shrink-0"
           data-ocid="nav.link"
         >
-          <div className="bg-primary rounded-full p-1.5">
-            <Tractor className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <img
+            src="/assets/uploads/IMG_20260322_110511-2-1.jpg"
+            alt="Tirupati Tractors Logo"
+            className="h-10 w-10 rounded-full object-cover border-2 border-primary"
+          />
           <div>
             <span className="font-display font-bold text-primary text-lg leading-tight block">
-              Tirupati
+              Tirupati Tractors
             </span>
             <span className="font-display font-bold text-foreground text-xs leading-tight block tracking-wide uppercase">
-              Tractors
+              Swaraj Dealer · Balwadi
             </span>
           </div>
         </Link>
@@ -125,7 +118,7 @@ export default function Header({
             />
           </div>
 
-          <a href="tel:+919876543210" className="hidden sm:flex">
+          <a href="tel:+919424569451" className="hidden sm:flex">
             <Button
               variant="outline"
               size="icon"

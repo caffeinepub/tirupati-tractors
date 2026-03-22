@@ -85,7 +85,7 @@ export default function Footer() {
             <div className="space-y-3 text-sm text-footer-foreground/70">
               <div className="flex gap-2">
                 <MapPin className="h-4 w-4 text-gold shrink-0 mt-0.5" />
-                <span>Sendhwa Varla Road, Balwadi</span>
+                <span>Balwadi - Sendhwa, Madhya Pradesh</span>
               </div>
               <div className="flex gap-2">
                 <Phone className="h-4 w-4 text-gold shrink-0" />
@@ -99,10 +99,10 @@ export default function Footer() {
               <div className="flex gap-2">
                 <Mail className="h-4 w-4 text-gold shrink-0" />
                 <a
-                  href="mailto:info@tirupatitractors.in"
+                  href="mailto:Tirupatitractor551@gmail.com"
                   className="hover:text-gold transition-colors"
                 >
-                  info@tirupatitractors.in
+                  Tirupatitractor551@gmail.com
                 </a>
               </div>
             </div>

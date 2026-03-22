@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Product, ShowroomInfo } from "../backend.d";
+import type { Product, ShowroomInfo, UserProfile } from "../backend.d";
 import { useActor } from "./useActor";
 
 export function useGetAllProducts() {
@@ -120,10 +120,22 @@ export function useSaveUserProfile() {
   const { actor } = useActor();
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (name: string) => {
+    mutationFn: async (profile: UserProfile) => {
       if (!actor) throw new Error("No actor");
-      return actor.saveCallerUserProfile({ name });
+      return actor.saveCallerUserProfile(profile);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["currentUserProfile"] }),
+  });
+}
+
+export function useClaimAdminByEmail() {
+  const { actor } = useActor();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (email: string) => {
+      if (!actor) throw new Error("No actor");
+      return actor.claimAdminByEmail(email);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["isAdmin"] }),
   });
 }

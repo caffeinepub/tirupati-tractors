@@ -37,6 +37,7 @@ export enum UserRole {
 export interface backendInterface {
     addProduct(product: Product): Promise<bigint>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    claimAdminByEmail(email: string): Promise<boolean>;
     deleteProduct(id: bigint): Promise<boolean>;
     getAllProducts(): Promise<Array<Product>>;
     getCallerUserProfile(): Promise<UserProfile | null>;

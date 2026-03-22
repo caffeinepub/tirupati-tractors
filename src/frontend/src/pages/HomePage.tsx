@@ -224,7 +224,7 @@ export default function HomePage() {
             className="max-w-xl"
           >
             <span className="text-gold font-semibold text-sm uppercase tracking-widest mb-3 block">
-              Authorised Swaraj Dealer — Tirupati
+              Authorised Swaraj Dealer — Balwadi
             </span>
             <h1 className="text-4xl md:text-5xl font-display font-bold text-white leading-tight mb-4">
               Power Your Farm,
@@ -232,7 +232,7 @@ export default function HomePage() {
             </h1>
             <p className="text-white/80 text-base mb-8 leading-relaxed">
               Discover Swaraj's complete range of tractors and implements.
-              Trusted by 10,000+ farmers across Andhra Pradesh.
+              Trusted by 10,000+ farmers across Madhya Pradesh.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to="/models">
