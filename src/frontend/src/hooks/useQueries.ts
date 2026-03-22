@@ -1,14 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Product, ShowroomInfo, UserProfile } from "../backend.d";
+import type {
+  Product,
+  ProductEntry,
+  ShowroomInfo,
+  UserProfile,
+} from "../backend.d";
 import { useActor } from "./useActor";
 
 export function useGetAllProducts() {
   const { actor, isFetching } = useActor();
-  return useQuery<Product[]>({
+  return useQuery<ProductEntry[]>({
     queryKey: ["products"],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getAllProducts();
+      return actor.getAllProducts() as Promise<ProductEntry[]>;
     },
     enabled: !!actor && !isFetching,
   });
@@ -16,11 +21,11 @@ export function useGetAllProducts() {
 
 export function useGetProductsByCategory(category: string) {
   const { actor, isFetching } = useActor();
-  return useQuery<Product[]>({
+  return useQuery<ProductEntry[]>({
     queryKey: ["products", "category", category],
     queryFn: async () => {
       if (!actor) return [];
-      return actor.getProductsByCategory(category);
+      return actor.getProductsByCategory(category) as Promise<ProductEntry[]>;
     },
     enabled: !!actor && !isFetching && !!category,
   });
@@ -86,7 +91,9 @@ export function useUpdateProduct() {
   return useMutation({
     mutationFn: async ({ id, product }: { id: bigint; product: Product }) => {
       if (!actor) throw new Error("No actor");
-      return actor.updateProduct(id, product);
+      const result = await actor.updateProduct(id, product);
+      if (!result) throw new Error("Product not found");
+      return result;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["products"] }),
   });

@@ -10,9 +10,18 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { ImagePlus, Loader2, Plus, Trash2, Upload } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  ImagePlus,
+  Loader2,
+  Plus,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { useRef, useState } from "react";
-import type { Product } from "../backend.d";
+import { toast } from "sonner";
+import type { Product, ProductEntry } from "../backend.d";
 import { useImageUpload } from "../hooks/useImageUpload";
 
 const CATEGORIES = [
@@ -24,7 +33,7 @@ const CATEGORIES = [
 ];
 
 interface ProductFormProps {
-  initial?: Product & { id?: bigint };
+  initial?: ProductEntry;
   onSubmit: (product: Product) => void;
   onCancel: () => void;
   isPending: boolean;
@@ -50,10 +59,26 @@ export default function ProductForm({
   onCancel,
   isPending,
 }: ProductFormProps) {
-  const [form, setForm] = useState<Product>(initial ?? blank);
+  const [form, setForm] = useState<Product>(
+    initial
+      ? {
+          name: initial.name,
+          model: initial.model,
+          category: initial.category,
+          description: initial.description,
+          hpMin: initial.hpMin,
+          hpMax: initial.hpMax,
+          priceMin: initial.priceMin,
+          priceMax: initial.priceMax,
+          imageUrl: initial.imageUrl,
+          features: initial.features,
+          isAvailable: initial.isAvailable,
+        }
+      : blank,
+  );
   const [newFeature, setNewFeature] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadImage, isUploading, uploadProgress } = useImageUpload();
+  const { state, uploadImage } = useImageUpload();
 
   const set = (key: keyof Product, value: any) =>
     setForm((p) => ({ ...p, [key]: value }));
@@ -79,20 +104,37 @@ export default function ProductForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (state.status === "uploading") {
+      toast.warning("Please wait for image to finish uploading");
+      return;
+    }
     onSubmit(form);
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    try {
-      const url = await uploadImage(file);
-      set("imageUrl", url);
-    } catch {
-      // silent — progress resets automatically
-    }
+    await uploadImage(
+      file,
+      (url) => {
+        set("imageUrl", url);
+        toast.success("Image uploaded!");
+      },
+      (msg) => {
+        toast.error(`Upload failed: ${msg}`);
+      },
+    );
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
+
+  const previewSrc =
+    state.status === "uploading" ||
+    state.status === "done" ||
+    state.status === "error"
+      ? state.previewUrl
+      : form.imageUrl;
+
+  const isUploading = state.status === "uploading";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -228,9 +270,9 @@ export default function ProductForm({
         <Label>Product Image</Label>
         <div className="mt-1.5 flex items-start gap-3">
           <div className="shrink-0">
-            {form.imageUrl ? (
+            {previewSrc ? (
               <img
-                src={form.imageUrl}
+                src={previewSrc}
                 alt="preview"
                 className="h-20 w-28 object-cover rounded-lg border border-border"
               />
@@ -263,21 +305,45 @@ export default function ProductForm({
               ) : (
                 <Upload className="h-4 w-4" />
               )}
-              {isUploading ? "Uploading..." : "Upload Image"}
+              {isUploading
+                ? "Uploading..."
+                : previewSrc
+                  ? "Change Image"
+                  : "Upload Image"}
             </Button>
 
-            {isUploading && uploadProgress !== null && (
+            {state.status === "uploading" && (
               <div className="w-full" data-ocid="product_form.loading_state">
                 <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                   <div
                     className="h-full bg-primary transition-all duration-200"
-                    style={{ width: `${uploadProgress}%` }}
+                    style={{ width: `${state.progress}%` }}
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {uploadProgress}% uploaded
+                  {state.progress}% uploaded
                 </p>
               </div>
+            )}
+
+            {state.status === "done" && (
+              <p
+                className="text-xs text-green-600 flex items-center gap-1"
+                data-ocid="product_form.success_state"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Image uploaded successfully
+              </p>
+            )}
+
+            {state.status === "error" && (
+              <p
+                className="text-xs text-destructive flex items-center gap-1"
+                data-ocid="product_form.error_state"
+              >
+                <AlertCircle className="h-3.5 w-3.5" />
+                Upload failed. Please try again.
+              </p>
             )}
           </div>
         </div>

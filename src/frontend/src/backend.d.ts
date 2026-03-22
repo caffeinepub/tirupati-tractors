@@ -29,6 +29,20 @@ export interface Product {
     priceMax: number;
     priceMin: number;
 }
+export interface ProductEntry {
+    id: bigint;
+    model: string;
+    features: Array<string>;
+    hpMax: bigint;
+    hpMin: bigint;
+    name: string;
+    isAvailable: boolean;
+    description: string;
+    imageUrl: string;
+    category: string;
+    priceMax: number;
+    priceMin: number;
+}
 export enum UserRole {
     admin = "admin",
     user = "user",
@@ -39,11 +53,11 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     claimAdminByEmail(email: string): Promise<boolean>;
     deleteProduct(id: bigint): Promise<boolean>;
-    getAllProducts(): Promise<Array<Product>>;
+    getAllProducts(): Promise<Array<ProductEntry>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getProduct(id: bigint): Promise<Product | null>;
-    getProductsByCategory(category: string): Promise<Array<Product>>;
+    getProductsByCategory(category: string): Promise<Array<ProductEntry>>;
     getShowroomInfo(): Promise<ShowroomInfo>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;

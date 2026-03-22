@@ -23,7 +23,7 @@ import {
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { Product } from "../backend.d";
+import type { ProductEntry } from "../backend.d";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import { SAMPLE_PRODUCTS, TRACTOR_MODELS } from "../data/products";
@@ -194,13 +194,14 @@ function EnquirySection() {
 
 export default function HomePage() {
   const { data: backendProducts, isLoading } = useGetAllProducts();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductEntry | null>(
+    null,
+  );
 
-  const products = (
+  const products: ProductEntry[] =
     backendProducts && backendProducts.length > 0
       ? backendProducts
-      : SAMPLE_PRODUCTS
-  ) as Product[];
+      : SAMPLE_PRODUCTS;
   const displayProducts = products.slice(0, 6);
 
   return (
@@ -288,7 +289,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {displayProducts.map((p, i) => (
                 <motion.div
-                  key={p.name}
+                  key={String(p.id)}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -300,7 +301,8 @@ export default function HomePage() {
                     onViewSpecs={setSelectedProduct}
                     onGetQuote={(prod) =>
                       window.open(
-                        `https://wa.me/919876543210?text=I%27m%20interested%20in%20${encodeURIComponent(prod.name)}`,
+                        `https://wa.me/919424569451?text=${encodeURIComponent(`Hi, I am interested in ${prod.name}. Please share the price quote.`)}`,
+                        "_blank",
                       )
                     }
                   />

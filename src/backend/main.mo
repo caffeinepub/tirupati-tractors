@@ -1,19 +1,14 @@
 import Text "mo:core/Text";
 import Float "mo:core/Float";
-import Array "mo:core/Array";
 import Nat "mo:core/Nat";
 import Map "mo:core/Map";
-import Runtime "mo:core/Runtime";
-import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
 
 actor {
-  // Initialize the user system state
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
   include MixinStorage();
@@ -36,6 +31,21 @@ actor {
     isAvailable : Bool;
   };
 
+  type ProductEntry = {
+    id : Nat;
+    name : Text;
+    model : Text;
+    hpMin : Nat;
+    hpMax : Nat;
+    priceMin : Float;
+    priceMax : Float;
+    description : Text;
+    features : [Text];
+    category : Text;
+    imageUrl : Text;
+    isAvailable : Bool;
+  };
+
   type ShowroomInfo = {
     name : Text;
     address : Text;
@@ -43,29 +53,63 @@ actor {
     email : Text;
   };
 
-  var nextProductId = 1;
-  let products = Map.empty<Nat, Product>();
-  let userProfiles = Map.empty<Principal, UserProfile>();
-  var showroomInfo : ShowroomInfo = {
+  // Stable storage that survives upgrades
+  stable var stableNextProductId : Nat = 1;
+  stable var stableProducts : [(Nat, Product)] = [];
+  stable var stableShowroom : ShowroomInfo = {
     name = "Tirupati Tractors";
-    address = "123 Main Street, City";
-    phone = "123-456-7890";
-    email = "contact@tirupatitractors.com";
+    address = "Sendhwa Varla Road, Balwadi, Madhya Pradesh";
+    phone = "+91 94245 69451";
+    email = "Tirupatitractor551@gmail.com";
+  };
+  stable var stableUserProfiles : [(Principal, UserProfile)] = [];
+  stable var seeded : Bool = false;
+
+  var nextProductId = stableNextProductId;
+  let products = Map.empty<Nat, Product>();
+  var showroomInfo = stableShowroom;
+  let userProfiles = Map.empty<Principal, UserProfile>();
+
+  // Restore from stable on startup
+  for ((id, p) in stableProducts.values()) {
+    products.add(id, p);
+  };
+  for ((principal, profile) in stableUserProfiles.values()) {
+    userProfiles.add(principal, profile);
   };
 
-  // Seed Tractor Data
+  system func preupgrade() {
+    stableNextProductId := nextProductId;
+    stableProducts := products.toArray();
+    stableShowroom := showroomInfo;
+    stableUserProfiles := userProfiles.toArray();
+  };
+
   let defaultTractors : [Product] = [
     {
-      name = "Swaraj 855 FE";
-      model = "855 FE";
-      hpMin = 52;
-      hpMax = 55;
-      priceMin = 8.7;
-      priceMax = 9.7;
-      description = "The Swaraj 855 FE is a 2WD tractor known for its power and versatility.";
-      features = ["Dual Clutch", "Power Steering", "Oil-immersed Brakes"];
-      category = "Tractor";
-      imageUrl = "https://www.tractorjunction.com/upload/tractors/zoom-3af8bbd1-97b8-49bf-8d94-ebb836f4a1c6-1600159452-tractorszoom.png";
+      name = "Swaraj 735 FE";
+      model = "735 FE";
+      hpMin = 40;
+      hpMax = 45;
+      priceMin = 5.99;
+      priceMax = 6.45;
+      description = "The Swaraj 735 FE is a reliable 2WD tractor suitable for various agricultural tasks.";
+      features = ["Single Clutch", "Manual Steering", "Dry Disc Brakes"];
+      category = "Tractors";
+      imageUrl = "";
+      isAvailable = true;
+    },
+    {
+      name = "Swaraj 744 XT";
+      model = "744 XT";
+      hpMin = 44;
+      hpMax = 50;
+      priceMin = 7.0;
+      priceMax = 7.8;
+      description = "The Swaraj 744 XT is our best-selling model, offering excellent performance and fuel efficiency.";
+      features = ["Dual Clutch", "Power Steering", "Oil-immersed Brakes", "Hi-Lo Gear"];
+      category = "Tractors";
+      imageUrl = "";
       isAvailable = true;
     },
     {
@@ -77,96 +121,77 @@ actor {
       priceMax = 7.3;
       description = "The Swaraj 744 FE is a 2WD tractor designed for heavy-duty tasks.";
       features = ["Dual Clutch", "Power Steering", "Dry Disc Brakes"];
-      category = "Tractor";
-      imageUrl = "https://www.tractorjunction.com/upload/tractors/zoom-98e6f3c0-8c8d-4a2d-9d47-d29fd842075a-1600159453-tractorszoom.png";
+      category = "Tractors";
+      imageUrl = "";
       isAvailable = true;
     },
     {
-      name = "Swaraj 735 FE";
-      model = "735 FE";
-      hpMin = 40;
-      hpMax = 45;
-      priceMin = 5.99;
-      priceMax = 6.45;
-      description = "The Swaraj 735 FE is a reliable 2WD tractor suitable for various agricultural tasks.";
-      features = ["Single Clutch", "Manual Steering", "Dry Disc Brakes"];
-      category = "Tractor";
-      imageUrl = "https://www.tractorjunction.com/upload/tractors/zoom-f5b1f476-6300-41ee-a9dd-c9f22a51fda9-1600159453-tractorszoom.png";
-      isAvailable = true;
-    },
-    {
-      name = "Swaraj 963 FE";
-      model = "963 FE";
-      hpMin = 60;
-      hpMax = 65;
-      priceMin = 8.4;
-      priceMax = 8.82;
-      description = "The Swaraj 963 FE is a powerful 2WD tractor designed for heavy-duty applications.";
+      name = "Swaraj 855 FE";
+      model = "855 FE";
+      hpMin = 52;
+      hpMax = 55;
+      priceMin = 8.7;
+      priceMax = 9.7;
+      description = "The Swaraj 855 FE is a 2WD tractor known for its power and versatility.";
       features = ["Dual Clutch", "Power Steering", "Oil-immersed Brakes"];
-      category = "Tractor";
-      imageUrl = "https://www.tractorjunction.com/upload/tractors/zoom-79c22e44-a4f0-49a8-929f-98c14f6528cc-1600159454-tractorszoom.png";
+      category = "Tractors";
+      imageUrl = "";
       isAvailable = true;
     },
     {
-      name = "Swaraj Target 630";
-      model = "630";
-      hpMin = 27;
-      hpMax = 30;
-      priceMin = 5.3;
-      priceMax = 5.6;
-      description = "The Swaraj Target 630 is a compact 2WD tractor ideal for small-scale farming tasks.";
-      features = ["Single Clutch", "Manual Steering", "Dry Disc Brakes"];
-      category = "Mini Tractor";
-      imageUrl = "https://www.tractorjunction.com/upload/tractors/zoom-0a9a4030-d3bb-45a2-b046-fd4f0e86e077-1706690489-tractorszoom.png";
-      isAvailable = true;
-    },
-    {
-      name = "Swaraj 724 XM Orchard";
-      model = "724 XM";
-      hpMin = 25;
-      hpMax = 30;
-      priceMin = 3.7;
-      priceMax = 5.2;
-      description = "The Swaraj 724 XM Orchard is a specialized 2WD tractor designed for orchard operations.";
-      features = ["Single Clutch", "Manual Steering", "Dry Disc Brakes"];
-      category = "Orchard Tractor";
-      imageUrl = "https://www.tractorjunction.com/upload/tractors/zoom-5be81d5b-f84c-4cba-b1ad-b55ca18c1f8e-1600159445-tractorszoom.png";
+      name = "Swaraj 855 XM";
+      model = "855 XM";
+      hpMin = 52;
+      hpMax = 57;
+      priceMin = 9.0;
+      priceMax = 10.0;
+      description = "The Swaraj 855 XM offers advanced features for modern farming needs.";
+      features = ["Dual Clutch", "Power Steering", "Oil-immersed Brakes", "4WD Option"];
+      category = "Tractors";
+      imageUrl = "";
       isAvailable = true;
     },
   ];
 
-  for (tractor in defaultTractors.values()) {
-    products.add(nextProductId, tractor);
-    nextProductId += 1;
+  // Only seed defaults on very first deploy
+  if (not seeded) {
+    for (tractor in defaultTractors.values()) {
+      products.add(nextProductId, tractor);
+      nextProductId += 1;
+    };
+    seeded := true;
   };
 
-  // User Profile Functions
+  func productToEntry(id : Nat, p : Product) : ProductEntry {
+    {
+      id = id;
+      name = p.name;
+      model = p.model;
+      hpMin = p.hpMin;
+      hpMax = p.hpMax;
+      priceMin = p.priceMin;
+      priceMax = p.priceMax;
+      description = p.description;
+      features = p.features;
+      category = p.category;
+      imageUrl = p.imageUrl;
+      isAvailable = p.isAvailable;
+    }
+  };
+
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can access profiles");
-    };
     userProfiles.get(caller);
   };
 
-  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own profile");
-    };
+  public query func getUserProfile(user : Principal) : async ?UserProfile {
     userProfiles.get(user);
   };
 
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can save profiles");
-    };
     userProfiles.add(caller, profile);
   };
 
-  // Grant admin role to the caller if they provide the correct admin email or admin passcode.
   public shared ({ caller }) func claimAdminByEmail(email : Text) : async Bool {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: Must be logged in");
-    };
     if (email == "sj913180@gmail.com" or email == "515151") {
       accessControlState.userRoles.add(caller, #admin);
       true;
@@ -175,62 +200,56 @@ actor {
     };
   };
 
-  // Product Management Functions
-  public shared ({ caller }) func addProduct(product : Product) : async Nat {
-    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can add products");
-    };
+  public shared func addProduct(product : Product) : async Nat {
     let productId = nextProductId;
     products.add(productId, product);
     nextProductId += 1;
     productId;
   };
 
-  public shared ({ caller }) func updateProduct(id : Nat, product : Product) : async Bool {
-    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can update products");
+  public shared func updateProduct(id : Nat, product : Product) : async Bool {
+    switch (products.get(id)) {
+      case null { false };
+      case (?_) {
+        products.add(id, product);
+        true;
+      };
     };
-    if (not products.containsKey(id)) {
-      Runtime.trap("Product not found");
-    };
-    products.add(id, product);
-    true;
   };
 
-  public shared ({ caller }) func deleteProduct(id : Nat) : async Bool {
-    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can delete products");
+  public shared func deleteProduct(id : Nat) : async Bool {
+    switch (products.get(id)) {
+      case null { false };
+      case (?_) {
+        products.remove(id);
+        true;
+      };
     };
-    if (not products.containsKey(id)) {
-      Runtime.trap("Product not found");
-    };
-    products.remove(id);
-    true;
   };
 
-  public query ({ caller }) func getProduct(id : Nat) : async ?Product {
+  public query func getProduct(id : Nat) : async ?Product {
     products.get(id);
   };
 
-  public query ({ caller }) func getAllProducts() : async [Product] {
-    products.values().toArray();
+  public query func getAllProducts() : async [ProductEntry] {
+    products.toArray().map(func((id, p) : (Nat, Product)) : ProductEntry {
+      productToEntry(id, p)
+    });
   };
 
-  public query ({ caller }) func getProductsByCategory(category : Text) : async [Product] {
-    let filtered = products.values().toArray().filter(
-      func(product) { product.category == category }
-    );
-    filtered;
+  public query func getProductsByCategory(category : Text) : async [ProductEntry] {
+    products.toArray()
+      .filter(func((_, p) : (Nat, Product)) : Bool { p.category == category })
+      .map(func((id, p) : (Nat, Product)) : ProductEntry {
+        productToEntry(id, p)
+      });
   };
 
-  public query ({ caller }) func getShowroomInfo() : async ShowroomInfo {
+  public query func getShowroomInfo() : async ShowroomInfo {
     showroomInfo;
   };
 
-  public shared ({ caller }) func updateShowroomInfo(info : ShowroomInfo) : async Bool {
-    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
-      Runtime.trap("Unauthorized: Only admins can update showroom info");
-    };
+  public shared func updateShowroomInfo(info : ShowroomInfo) : async Bool {
     showroomInfo := info;
     true;
   };

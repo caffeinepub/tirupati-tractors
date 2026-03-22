@@ -1,14 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, MessageSquare, Star } from "lucide-react";
-import type { Product } from "../backend.d";
+import type { ProductEntry } from "../backend.d";
 import { BEST_SELLER_MODEL } from "../data/products";
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductEntry;
   index: number;
-  onViewSpecs: (product: Product) => void;
-  onGetQuote: (product: Product) => void;
+  onViewSpecs: (product: ProductEntry) => void;
+  onGetQuote: (product: ProductEntry) => void;
 }
 
 export default function ProductCard({

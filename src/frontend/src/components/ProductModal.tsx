@@ -7,10 +7,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CheckCircle, MessageCircle, X, XCircle } from "lucide-react";
-import type { Product } from "../backend.d";
+import type { ProductEntry } from "../backend.d";
 
 interface ProductModalProps {
-  product: Product | null;
+  product: ProductEntry | null;
   open: boolean;
   onClose: () => void;
 }

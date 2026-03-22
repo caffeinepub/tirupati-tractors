@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Filter, Search } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
-import type { Product } from "../backend.d";
+import type { ProductEntry } from "../backend.d";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import { SAMPLE_PRODUCTS } from "../data/products";
@@ -16,13 +16,12 @@ export default function ModelsPage() {
   const { data: backendProducts, isLoading } = useGetAllProducts();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
-  const [selected, setSelected] = useState<Product | null>(null);
+  const [selected, setSelected] = useState<ProductEntry | null>(null);
 
-  const products = (
-    backendProducts && backendProducts.length > 0
-      ? backendProducts
-      : SAMPLE_PRODUCTS
-  ) as Product[];
+  const products: ProductEntry[] = useMemo(() => {
+    if (backendProducts && backendProducts.length > 0) return backendProducts;
+    return SAMPLE_PRODUCTS;
+  }, [backendProducts]);
 
   const filtered = useMemo(() => {
     let result = products;
@@ -111,7 +110,7 @@ export default function ModelsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((p, i) => (
             <motion.div
-              key={p.name}
+              key={String(p.id)}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
@@ -122,7 +121,8 @@ export default function ModelsPage() {
                 onViewSpecs={setSelected}
                 onGetQuote={(prod) =>
                   window.open(
-                    `https://wa.me/919876543210?text=I%27m%20interested%20in%20${encodeURIComponent(prod.name)}`,
+                    `https://wa.me/919424569451?text=${encodeURIComponent(`Hi, I am interested in ${prod.name}. Please share the price quote.`)}`,
+                    "_blank",
                   )
                 }
               />

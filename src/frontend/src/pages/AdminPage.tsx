@@ -35,7 +35,7 @@ import {
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { Product, ShowroomInfo } from "../backend.d";
+import type { Product, ProductEntry, ShowroomInfo } from "../backend.d";
 import ProductForm from "../components/ProductForm";
 import { SAMPLE_PRODUCTS } from "../data/products";
 import {
@@ -48,8 +48,6 @@ import {
 } from "../hooks/useQueries";
 
 const ADMIN_PASSCODE = "515151";
-
-type ProductWithId = Product & { id: bigint };
 
 export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(
@@ -68,15 +66,15 @@ export default function AdminPage() {
   const updateShowroom = useUpdateShowroomInfo();
 
   const [showForm, setShowForm] = useState(false);
-  const [editProduct, setEditProduct] = useState<ProductWithId | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<ProductWithId | null>(null);
+  const [editProduct, setEditProduct] = useState<ProductEntry | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ProductEntry | null>(null);
   const [showroomForm, setShowroomForm] = useState<ShowroomInfo | null>(null);
 
-  const products = (
+  // Use real backend products with real IDs; fall back to sample data only when backend has none
+  const products: ProductEntry[] =
     backendProducts && backendProducts.length > 0
-      ? backendProducts.map((p, i) => ({ ...p, id: BigInt(i) }))
-      : SAMPLE_PRODUCTS
-  ) as ProductWithId[];
+      ? backendProducts
+      : SAMPLE_PRODUCTS;
 
   const handlePasscodeSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,7 +166,10 @@ export default function AdminPage() {
   const handleUpdateProduct = async (product: Product) => {
     if (!editProduct) return;
     try {
-      await updateProduct.mutateAsync({ id: editProduct.id, product });
+      await updateProduct.mutateAsync({
+        id: editProduct.id,
+        product: product,
+      });
       toast.success("Product updated successfully");
       setEditProduct(null);
     } catch {
@@ -331,7 +332,7 @@ export default function AdminPage() {
                 <tbody>
                   {products.map((p, i) => (
                     <tr
-                      key={`${p.name}-${i}`}
+                      key={String(p.id)}
                       className="border-t border-border hover:bg-muted/30 transition-colors"
                       data-ocid={`admin.row.${i + 1}`}
                     >

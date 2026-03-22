@@ -21,7 +21,7 @@ export const SAMPLE_PRODUCTS: (Product & { id: bigint })[] = [
     hpMax: BigInt(36),
     priceMin: 5.8,
     priceMax: 6.5,
-    imageUrl: "/assets/generated/tractor-735.dim_600x400.jpg",
+    imageUrl: "/assets/uploads/633x512px-735-FE-4.png",
     features: [
       "34-36 HP Engine",
       "8F + 2R Gearbox",
@@ -42,7 +42,7 @@ export const SAMPLE_PRODUCTS: (Product & { id: bigint })[] = [
     hpMax: BigInt(45),
     priceMin: 7.2,
     priceMax: 8.0,
-    imageUrl: "/assets/generated/tractor-744.dim_600x400.jpg",
+    imageUrl: "/assets/uploads/swaraj-744-xt-2.webp",
     features: [
       "42-45 HP Engine",
       "8F + 2R Gearbox",
@@ -63,7 +63,7 @@ export const SAMPLE_PRODUCTS: (Product & { id: bigint })[] = [
     hpMax: BigInt(45),
     priceMin: 6.8,
     priceMax: 7.5,
-    imageUrl: "/assets/generated/tractor-744.dim_600x400.jpg",
+    imageUrl: "/assets/uploads/Swaraj-744-FE-4WD1733124209_Q_bRfo-Hu-3.png",
     features: [
       "42-45 HP Engine",
       "8F + 2R Gearbox",
@@ -84,7 +84,7 @@ export const SAMPLE_PRODUCTS: (Product & { id: bigint })[] = [
     hpMax: BigInt(55),
     priceMin: 8.5,
     priceMax: 9.5,
-    imageUrl: "/assets/generated/tractor-855.dim_600x400.jpg",
+    imageUrl: "/assets/uploads/tractor-image-0-1732968754-1.webp",
     features: [
       "52-55 HP Engine",
       "8F + 2R Gearbox",
@@ -105,7 +105,7 @@ export const SAMPLE_PRODUCTS: (Product & { id: bigint })[] = [
     hpMax: BigInt(55),
     priceMin: 9.0,
     priceMax: 10.0,
-    imageUrl: "/assets/generated/tractor-855.dim_600x400.jpg",
+    imageUrl: "/assets/uploads/Swaraj-855-XM1733206393__KtnYLHMm-1.png",
     features: [
       "52-55 HP Engine",
       "12F + 3R Gearbox",

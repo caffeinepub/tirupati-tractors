@@ -3,9 +3,14 @@ import { useRef, useState } from "react";
 import { loadConfig } from "../config";
 import { StorageClient } from "../utils/StorageClient";
 
+type UploadState =
+  | { status: "idle" }
+  | { status: "uploading"; progress: number; previewUrl: string }
+  | { status: "done"; url: string; previewUrl: string }
+  | { status: "error"; message: string; previewUrl: string };
+
 export function useImageUpload() {
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [state, setState] = useState<UploadState>({ status: "idle" });
   const clientRef = useRef<StorageClient | null>(null);
 
   const getClient = async (): Promise<StorageClient> => {
@@ -25,22 +30,32 @@ export function useImageUpload() {
     return clientRef.current;
   };
 
-  const uploadImage = async (file: File): Promise<string> => {
-    setIsUploading(true);
-    setUploadProgress(0);
+  const uploadImage = async (
+    file: File,
+    onSuccess: (url: string) => void,
+    onError: (message: string) => void,
+  ): Promise<void> => {
+    const previewUrl = URL.createObjectURL(file);
+    setState({ status: "uploading", progress: 0, previewUrl });
     try {
       const client = await getClient();
       const bytes = new Uint8Array(await file.arrayBuffer());
       const { hash } = await client.putFile(bytes, (pct) => {
-        setUploadProgress(pct);
+        setState({ status: "uploading", progress: pct, previewUrl });
       });
       const url = await client.getDirectURL(hash);
-      return url;
-    } finally {
-      setIsUploading(false);
-      setUploadProgress(null);
+      setState({ status: "done", url, previewUrl });
+      onSuccess(url);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setState({ status: "error", message, previewUrl });
+      onError(message);
     }
   };
 
-  return { uploadImage, isUploading, uploadProgress };
+  const reset = () => {
+    setState({ status: "idle" });
+  };
+
+  return { state, uploadImage, reset };
 }
