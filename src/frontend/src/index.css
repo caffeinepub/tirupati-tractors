@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/assets/fonts/PlusJakartaSans.woff2") format("woff2");
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
+  font-weight: 200 800;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+
+    /* Green & White palette */
+    --background: 0.973 0 0;
+    --foreground: 0.145 0.01 264;
+    --card: 1 0 0;
+    --card-foreground: 0.145 0.01 264;
+    --popover: 1 0 0;
+    --popover-foreground: 0.145 0.01 264;
+
+    /* Primary: deep green #15803D */
+    --primary: 0.527 0.154 145.4;
+    --primary-foreground: 1 0 0;
+
+    /* Secondary: dark green #166534 */
+    --secondary: 0.459 0.131 145.4;
+    --secondary-foreground: 1 0 0;
+
+    --muted: 0.96 0.005 145;
+    --muted-foreground: 0.502 0.01 264;
+
+    /* Accent: gold #D4A43A */
+    --accent: 0.726 0.131 78.6;
+    --accent-foreground: 0.145 0 0;
+
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+
+    --border: 0.922 0.003 264;
+    --input: 0.922 0.003 264;
+    --ring: 0.527 0.154 145.4;
+
+    /* Footer dark: #052e16 */
+    --footer: 0.22 0.08 145.4;
+    --footer-foreground: 0.95 0 0;
+
+    /* Gold accent standalone */
+    --gold: 0.726 0.131 78.6;
+    --gold-foreground: 0.145 0 0;
+
+    --chart-1: 0.527 0.154 145.4;
+    --chart-2: 0.726 0.131 78.6;
+    --chart-3: 0.459 0.131 145.4;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.769 0.188 70.08;
+
+    --sidebar: 0.97 0.005 145;
+    --sidebar-foreground: 0.145 0 0;
+    --sidebar-primary: 0.527 0.154 145.4;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.93 0.02 145;
+    --sidebar-accent-foreground: 0.145 0 0;
+    --sidebar-border: 0.922 0 0;
+    --sidebar-ring: 0.527 0.154 145.4;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+}
