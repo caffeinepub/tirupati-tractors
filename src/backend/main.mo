@@ -162,13 +162,12 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Grant admin role to the caller if they provide the correct admin email.
-  // This allows sj913180@gmail.com to self-promote to admin on first login.
+  // Grant admin role to the caller if they provide the correct admin email or admin passcode.
   public shared ({ caller }) func claimAdminByEmail(email : Text) : async Bool {
     if (caller.isAnonymous()) {
       Runtime.trap("Unauthorized: Must be logged in");
     };
-    if (email == "sj913180@gmail.com") {
+    if (email == "sj913180@gmail.com" or email == "515151") {
       accessControlState.userRoles.add(caller, #admin);
       true;
     } else {

@@ -100,6 +100,9 @@ const IMPLEMENTS = [
   },
 ];
 
+const WA_IMPL_LINK =
+  "https://wa.me/919424569451?text=Hi%2C%20I%20am%20interested%20in%20a%20farm%20implement.%20Please%20share%20the%20price%20quote.";
+
 export default function ImplementsPage() {
   return (
     <main className="max-w-[1200px] mx-auto px-4 py-10">
@@ -156,18 +159,15 @@ export default function ImplementsPage() {
                   <p className="text-xs text-muted-foreground">Starting from</p>
                   <p className="font-bold text-primary">₹{impl.price} Lakh*</p>
                 </div>
-                <button
-                  type="button"
+                <a
+                  href={WA_IMPL_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-primary text-primary-foreground text-xs px-4 py-2 rounded font-medium hover:bg-secondary transition-colors"
-                  onClick={() =>
-                    window.open(
-                      `https://wa.me/919876543210?text=I%27m%20interested%20in%20${encodeURIComponent(impl.name)}`,
-                    )
-                  }
                   data-ocid={`implements.item.${i + 1}.primary_button`}
                 >
                   Get Quote
-                </button>
+                </a>
               </div>
             </div>
           </motion.div>

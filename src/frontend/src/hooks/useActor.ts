@@ -6,22 +6,6 @@ import { getSecretParameter } from "../utils/urlParams";
 import { useInternetIdentity } from "./useInternetIdentity";
 
 const ACTOR_QUERY_KEY = "actor";
-const CLAIMED_ADMIN_EMAIL_KEY = "tirupati_claimed_admin_email";
-
-export function getStoredAdminEmail(): string | null {
-  try {
-    return localStorage.getItem(CLAIMED_ADMIN_EMAIL_KEY);
-  } catch {
-    return null;
-  }
-}
-
-export function storeAdminEmail(email: string) {
-  try {
-    localStorage.setItem(CLAIMED_ADMIN_EMAIL_KEY, email);
-  } catch {}
-}
-
 export function useActor() {
   const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
@@ -44,17 +28,6 @@ export function useActor() {
       const actor = await createActorWithConfig(actorOptions);
       const adminToken = getSecretParameter("caffeineAdminToken") || "";
       await actor._initializeAccessControlWithSecret(adminToken);
-
-      // Auto-reclaim admin role if a claimed admin email is stored locally
-      const storedEmail = getStoredAdminEmail();
-      if (storedEmail) {
-        try {
-          await actor.claimAdminByEmail(storedEmail);
-        } catch {
-          // Ignore errors — user may not be an admin
-        }
-      }
-
       return actor;
     },
     // Only refetch when identity changes

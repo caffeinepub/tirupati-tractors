@@ -69,7 +69,7 @@ export default function Header({
           data-ocid="nav.link"
         >
           <img
-            src="/assets/uploads/IMG_20260322_110511-2-1.jpg"
+            src="/assets/uploads/IMG_20260322_110511-4-1.jpg"
             alt="Tirupati Tractors Logo"
             className="h-10 w-10 rounded-full object-cover border-2 border-primary"
           />

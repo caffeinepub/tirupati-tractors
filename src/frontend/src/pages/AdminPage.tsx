@@ -32,12 +32,11 @@ import {
   XCircle,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Product, ShowroomInfo } from "../backend.d";
 import ProductForm from "../components/ProductForm";
 import { SAMPLE_PRODUCTS } from "../data/products";
-import { storeAdminEmail } from "../hooks/useActor";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useAddProduct,
@@ -69,13 +68,33 @@ export default function AdminPage() {
   const [editProduct, setEditProduct] = useState<ProductWithId | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProductWithId | null>(null);
   const [showroomForm, setShowroomForm] = useState<ShowroomInfo | null>(null);
-  const [claimEmail, setClaimEmail] = useState("");
+  const [adminCode, setAdminCode] = useState("");
 
   const products = (
     backendProducts && backendProducts.length > 0
       ? backendProducts.map((p, i) => ({ ...p, id: BigInt(i) }))
       : SAMPLE_PRODUCTS
   ) as ProductWithId[];
+
+  // Auto-restore admin access from saved code
+  useEffect(() => {
+    const savedCode = localStorage.getItem("adminCode");
+    if (savedCode && identity && !isAdmin && !adminLoading) {
+      claimAdmin
+        .mutateAsync(savedCode)
+        .then((result) => {
+          if (result === true) {
+            setTimeout(() => window.location.reload(), 500);
+          } else {
+            localStorage.removeItem("adminCode");
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem("adminCode");
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [identity, isAdmin, adminLoading, claimAdmin]);
 
   if (!identity) {
     return (
@@ -110,16 +129,15 @@ export default function AdminPage() {
   if (!isAdmin) {
     const handleClaimAdmin = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!claimEmail.trim()) return;
+      if (!adminCode.trim()) return;
       try {
-        const result = await claimAdmin.mutateAsync(claimEmail.trim());
+        const result = await claimAdmin.mutateAsync(adminCode.trim());
         if (result === true) {
-          // Persist email so admin role is re-claimed on every reload
-          storeAdminEmail(claimEmail.trim());
+          localStorage.setItem("adminCode", adminCode.trim());
           toast.success("Admin access granted! Reloading...");
           setTimeout(() => window.location.reload(), 1000);
         } else {
-          toast.error("Email not recognized as admin.");
+          toast.error("Incorrect admin code.");
         }
       } catch {
         toast.error("Failed to claim admin access.");
@@ -139,21 +157,20 @@ export default function AdminPage() {
           <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
           <h2 className="text-xl font-display font-bold mb-2">Access Denied</h2>
           <p className="text-muted-foreground text-sm mb-6">
-            If you have admin access, enter your admin email below to activate
-            it.
+            Enter the admin passcode to access the dashboard.
           </p>
 
           <form onSubmit={handleClaimAdmin} className="text-left space-y-3">
             <div>
-              <Label htmlFor="claim-email" className="text-sm font-medium">
-                Admin Email
+              <Label htmlFor="admin-code" className="text-sm font-medium">
+                Admin Passcode
               </Label>
               <Input
-                id="claim-email"
-                type="email"
-                placeholder="Enter your admin email"
-                value={claimEmail}
-                onChange={(e) => setClaimEmail(e.target.value)}
+                id="admin-code"
+                type="password"
+                placeholder="Enter admin code"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
                 disabled={claimAdmin.isPending}
                 className="mt-1"
                 data-ocid="admin.input"
@@ -161,7 +178,7 @@ export default function AdminPage() {
             </div>
             <Button
               type="submit"
-              disabled={claimAdmin.isPending || !claimEmail.trim()}
+              disabled={claimAdmin.isPending || !adminCode.trim()}
               className="w-full bg-primary text-primary-foreground hover:bg-secondary font-semibold"
               data-ocid="admin.submit_button"
             >
@@ -171,7 +188,7 @@ export default function AdminPage() {
                   Verifying...
                 </>
               ) : (
-                "Claim Admin Access"
+                "Enter Admin"
               )}
             </Button>
           </form>

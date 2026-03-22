@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckCircle, X, XCircle } from "lucide-react";
+import { CheckCircle, MessageCircle, X, XCircle } from "lucide-react";
 import type { Product } from "../backend.d";
 
 interface ProductModalProps {
@@ -21,6 +21,10 @@ export default function ProductModal({
   onClose,
 }: ProductModalProps) {
   if (!product) return null;
+
+  const waText = encodeURIComponent(
+    `Hi, I am interested in ${product.name}. Please share the price quote.`,
+  );
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -115,12 +119,18 @@ export default function ProductModal({
             </div>
           )}
 
-          <Button
-            className="w-full mt-6 bg-primary text-primary-foreground hover:bg-secondary"
+          <a
+            href={`https://wa.me/919424569451?text=${waText}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full mt-6"
             data-ocid="products.dialog.primary_button"
           >
-            Get Price Quote
-          </Button>
+            <Button className="w-full bg-primary text-primary-foreground hover:bg-secondary">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Get Price Quote on WhatsApp
+            </Button>
+          </a>
         </div>
       </DialogContent>
     </Dialog>

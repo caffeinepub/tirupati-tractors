@@ -15,11 +15,18 @@ export default function ProductCard({
   product,
   index,
   onViewSpecs,
-  onGetQuote,
+  onGetQuote: _onGetQuote,
 }: ProductCardProps) {
   const imgSrc =
     product.imageUrl || "/assets/generated/tractor-744.dim_600x400.jpg";
   const isBestSeller = product.model === BEST_SELLER_MODEL;
+
+  const handleGetQuote = () => {
+    const text = encodeURIComponent(
+      `Hi, I am interested in ${product.name}. Please share the price quote.`,
+    );
+    window.open(`https://wa.me/919424569451?text=${text}`, "_blank");
+  };
 
   return (
     <div
@@ -131,7 +138,7 @@ export default function ProductCard({
                   ? "bg-gold text-gold-foreground hover:bg-gold/90"
                   : "bg-primary text-primary-foreground hover:bg-secondary"
               }`}
-              onClick={() => onGetQuote(product)}
+              onClick={handleGetQuote}
               data-ocid={`products.item.${index}.primary_button`}
             >
               <MessageSquare className="h-3.5 w-3.5 mr-1" />
