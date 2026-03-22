@@ -279,15 +279,6 @@ export default function ProductForm({
                 </p>
               </div>
             )}
-
-            <Input
-              type="url"
-              value={form.imageUrl}
-              onChange={(e) => set("imageUrl", e.target.value)}
-              placeholder="Or paste image URL directly"
-              className="text-xs"
-              data-ocid="product_form.input"
-            />
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ import {
   CheckCircle,
   Edit2,
   Loader2,
+  Lock,
   Package,
   Plus,
   Settings,
@@ -32,28 +33,31 @@ import {
   XCircle,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import type { Product, ShowroomInfo } from "../backend.d";
 import ProductForm from "../components/ProductForm";
 import { SAMPLE_PRODUCTS } from "../data/products";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useAddProduct,
-  useClaimAdminByEmail,
   useDeleteProduct,
   useGetAllProducts,
   useGetShowroomInfo,
-  useIsAdmin,
   useUpdateProduct,
   useUpdateShowroomInfo,
 } from "../hooks/useQueries";
 
+const ADMIN_PASSCODE = "515151";
+
 type ProductWithId = Product & { id: bigint };
 
 export default function AdminPage() {
-  const { identity } = useInternetIdentity();
-  const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
+  const [isAdmin, setIsAdmin] = useState(
+    () => localStorage.getItem("adminUnlocked") === "true",
+  );
+  const [passcode, setPasscode] = useState("");
+  const [error, setError] = useState("");
+
   const { data: backendProducts, isLoading: productsLoading } =
     useGetAllProducts();
   const { data: showroom } = useGetShowroomInfo();
@@ -62,13 +66,11 @@ export default function AdminPage() {
   const updateProduct = useUpdateProduct();
   const deleteProduct = useDeleteProduct();
   const updateShowroom = useUpdateShowroomInfo();
-  const claimAdmin = useClaimAdminByEmail();
 
   const [showForm, setShowForm] = useState(false);
   const [editProduct, setEditProduct] = useState<ProductWithId | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProductWithId | null>(null);
   const [showroomForm, setShowroomForm] = useState<ShowroomInfo | null>(null);
-  const [adminCode, setAdminCode] = useState("");
 
   const products = (
     backendProducts && backendProducts.length > 0
@@ -76,122 +78,78 @@ export default function AdminPage() {
       : SAMPLE_PRODUCTS
   ) as ProductWithId[];
 
-  // Auto-restore admin access from saved code
-  useEffect(() => {
-    const savedCode = localStorage.getItem("adminCode");
-    if (savedCode && identity && !isAdmin && !adminLoading) {
-      claimAdmin
-        .mutateAsync(savedCode)
-        .then((result) => {
-          if (result === true) {
-            setTimeout(() => window.location.reload(), 500);
-          } else {
-            localStorage.removeItem("adminCode");
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem("adminCode");
-        });
+  const handlePasscodeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passcode === ADMIN_PASSCODE) {
+      localStorage.setItem("adminUnlocked", "true");
+      setIsAdmin(true);
+      setError("");
+    } else {
+      setError("Incorrect passcode. Please try again.");
+      setPasscode("");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [identity, isAdmin, adminLoading, claimAdmin]);
-
-  if (!identity) {
-    return (
-      <div
-        className="max-w-[600px] mx-auto px-4 py-20 text-center"
-        data-ocid="admin.panel"
-      >
-        <div className="bg-card rounded-xl border border-border p-10">
-          <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-display font-bold mb-2">
-            Admin Access Required
-          </h2>
-          <p className="text-muted-foreground text-sm">
-            Please log in to access the admin dashboard.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (adminLoading) {
-    return (
-      <div
-        className="flex items-center justify-center py-20"
-        data-ocid="admin.loading_state"
-      >
-        <Loader2 className="h-8 w-8 text-primary animate-spin" />
-      </div>
-    );
-  }
+  };
 
   if (!isAdmin) {
-    const handleClaimAdmin = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!adminCode.trim()) return;
-      try {
-        const result = await claimAdmin.mutateAsync(adminCode.trim());
-        if (result === true) {
-          localStorage.setItem("adminCode", adminCode.trim());
-          toast.success("Admin access granted! Reloading...");
-          setTimeout(() => window.location.reload(), 1000);
-        } else {
-          toast.error("Incorrect admin code.");
-        }
-      } catch {
-        toast.error("Failed to claim admin access.");
-      }
-    };
-
     return (
-      <div
-        className="max-w-[500px] mx-auto px-4 py-20 text-center"
-        data-ocid="admin.panel"
-      >
+      <div className="min-h-[70vh] flex items-center justify-center px-4">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-card rounded-xl border border-border p-10"
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-[420px]"
+          data-ocid="admin.panel"
         >
-          <XCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-display font-bold mb-2">Access Denied</h2>
-          <p className="text-muted-foreground text-sm mb-6">
-            Enter the admin passcode to access the dashboard.
-          </p>
-
-          <form onSubmit={handleClaimAdmin} className="text-left space-y-3">
-            <div>
-              <Label htmlFor="admin-code" className="text-sm font-medium">
-                Admin Passcode
-              </Label>
-              <Input
-                id="admin-code"
-                type="password"
-                placeholder="Enter admin code"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                disabled={claimAdmin.isPending}
-                className="mt-1"
-                data-ocid="admin.input"
-              />
+          <div className="bg-card rounded-2xl border border-border shadow-lg p-10">
+            <div className="flex flex-col items-center mb-8">
+              <div className="bg-primary/10 p-4 rounded-full mb-4">
+                <Lock className="h-8 w-8 text-primary" />
+              </div>
+              <h1 className="text-2xl font-display font-bold text-foreground">
+                Admin Access
+              </h1>
+              <p className="text-muted-foreground text-sm mt-1 text-center">
+                Enter your passcode to manage the dashboard
+              </p>
             </div>
-            <Button
-              type="submit"
-              disabled={claimAdmin.isPending || !adminCode.trim()}
-              className="w-full bg-primary text-primary-foreground hover:bg-secondary font-semibold"
-              data-ocid="admin.submit_button"
-            >
-              {claimAdmin.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                "Enter Admin"
-              )}
-            </Button>
-          </form>
+
+            <form onSubmit={handlePasscodeSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="passcode" className="text-sm font-medium">
+                  Passcode
+                </Label>
+                <Input
+                  id="passcode"
+                  type="password"
+                  placeholder="Enter passcode"
+                  value={passcode}
+                  onChange={(e) => {
+                    setPasscode(e.target.value);
+                    setError("");
+                  }}
+                  className="mt-1.5"
+                  autoFocus
+                  data-ocid="admin.input"
+                />
+                {error && (
+                  <p
+                    className="text-destructive text-sm mt-1.5"
+                    data-ocid="admin.error_state"
+                  >
+                    {error}
+                  </p>
+                )}
+              </div>
+              <Button
+                type="submit"
+                disabled={!passcode.trim()}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold py-5"
+                data-ocid="admin.submit_button"
+              >
+                Enter Admin
+              </Button>
+            </form>
+          </div>
         </motion.div>
       </div>
     );
@@ -243,8 +201,8 @@ export default function AdminPage() {
   const currentShowroom: ShowroomInfo = showroom || {
     name: "Tirupati Tractors",
     address: "Sendhwa Varla Road, Balwadi, Madhya Pradesh",
-    phone: "+91 98765 43210",
-    email: "info@tirupatitractors.in",
+    phone: "+91 94245 69451",
+    email: "Tirupatitractor551@gmail.com",
   };
 
   return (
@@ -254,18 +212,31 @@ export default function AdminPage() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-lg">
-            <Settings className="h-6 w-6 text-primary" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-lg">
+              <Settings className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-display font-bold text-foreground">
+                Admin Dashboard
+              </h1>
+              <p className="text-muted-foreground text-sm">
+                Manage your product catalog and showroom info
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-display font-bold text-foreground">
-              Admin Dashboard
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Manage your product catalog and showroom info
-            </p>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem("adminUnlocked");
+              setIsAdmin(false);
+            }}
+            data-ocid="admin.secondary_button"
+          >
+            Lock
+          </Button>
         </div>
       </motion.div>
 
@@ -281,7 +252,6 @@ export default function AdminPage() {
 
         {/* Products Tab */}
         <TabsContent value="products">
-          {/* Prominent Add CTA banner */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -307,7 +277,7 @@ export default function AdminPage() {
             </div>
             <Button
               onClick={() => setShowForm(true)}
-              className="bg-primary text-primary-foreground hover:bg-secondary font-semibold px-5 shrink-0"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-5 shrink-0"
               size="lg"
               data-ocid="admin.primary_button"
             >
@@ -437,7 +407,7 @@ export default function AdminPage() {
                     </tr>
                   ))}
 
-                  {/* Placeholder row — signals room for more */}
+                  {/* Placeholder row */}
                   <tr className="border-t border-dashed border-border">
                     <td colSpan={6} className="px-4 py-4">
                       <button
