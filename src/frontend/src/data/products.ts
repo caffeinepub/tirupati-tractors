@@ -84,7 +84,7 @@ export const SAMPLE_PRODUCTS: (Product & { id: bigint })[] = [
     hpMax: BigInt(55),
     priceMin: 8.5,
     priceMax: 9.5,
-    imageUrl: "/assets/uploads/tractor-image-0-1732968754-1.webp",
+    imageUrl: "/assets/uploads/swaraj_855FE_633x512px_1_010923-1.png",
     features: [
       "52-55 HP Engine",
       "8F + 2R Gearbox",
