@@ -29,8 +29,6 @@ import ProductModal from "../components/ProductModal";
 import { SAMPLE_PRODUCTS, TRACTOR_MODELS } from "../data/products";
 import { useGetAllProducts } from "../hooks/useQueries";
 
-const BG_IMAGE = "url('/assets/uploads/IMG-20260322-WA0002-2-1.jpg')";
-
 const IMPLEMENTS = [
   {
     title: "Rotavators",
@@ -72,29 +70,18 @@ function EnquirySection() {
   };
 
   return (
-    <section
-      className="relative py-14"
-      id="enquiry"
-      style={{
-        backgroundImage: BG_IMAGE,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/60" />
-
-      <div className="relative z-10 max-w-[1200px] mx-auto px-4">
+    <section className="py-14 bg-primary" id="enquiry">
+      <div className="max-w-[1200px] mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-10"
         >
-          <h2 className="text-2xl font-display font-bold uppercase tracking-wider text-white">
+          <h2 className="text-2xl font-display font-bold uppercase tracking-wider text-primary-foreground">
             Get in Touch
           </h2>
-          <p className="text-white/70 text-sm mt-2">
+          <p className="text-primary-foreground/70 text-sm mt-2">
             Interested in a tractor? Fill in your details and we'll get back to
             you.
           </p>
@@ -271,28 +258,18 @@ export default function HomePage() {
       </section>
 
       {/* Product Grid */}
-      <section
-        className="relative py-14"
-        style={{
-          backgroundImage: BG_IMAGE,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/55" />
-
-        <div className="relative z-10 max-w-[1200px] mx-auto px-4">
+      <section className="py-14 bg-muted/30">
+        <div className="max-w-[1200px] mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-10"
           >
-            <h2 className="text-2xl font-display font-bold uppercase tracking-wider text-white">
+            <h2 className="text-2xl font-display font-bold uppercase tracking-wider text-foreground">
               Our Swaraj Tractor Lineup
             </h2>
-            <p className="text-white/70 text-sm mt-2">
+            <p className="text-muted-foreground text-sm mt-2">
               5 models available — from 35 HP to 55 HP
             </p>
           </motion.div>
@@ -336,7 +313,7 @@ export default function HomePage() {
           <div className="text-center mt-8">
             <Link to="/models">
               <Button
-                className="bg-white text-foreground hover:bg-white/90 font-semibold border border-border"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
                 data-ocid="models.primary_button"
               >
                 View All Models <ChevronRight className="ml-1 h-4 w-4" />
