@@ -7,6 +7,7 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import ProfileSetupModal from "./components/ProfileSetupModal";
@@ -33,6 +34,15 @@ function AppShell() {
   const isAuthenticated = !!identity;
   const showProfileSetup =
     isAuthenticated && !profileLoading && isFetched && userProfile === null;
+
+  useEffect(() => {
+    // Auto-refresh the page after 24 hours to ensure latest content is shown
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+    const timer = setTimeout(() => {
+      window.location.reload();
+    }, TWENTY_FOUR_HOURS);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">

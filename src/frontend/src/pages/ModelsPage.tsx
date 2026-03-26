@@ -26,7 +26,10 @@ export default function ModelsPage() {
         if (match) {
           return {
             ...match,
-            imageUrl: match.imageUrl || sample.imageUrl,
+            imageUrl:
+              match.imageUrl && !match.imageUrl.startsWith("http")
+                ? match.imageUrl
+                : sample.imageUrl,
           };
         }
       }

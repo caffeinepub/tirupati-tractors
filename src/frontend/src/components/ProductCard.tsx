@@ -17,8 +17,6 @@ export default function ProductCard({
   onViewSpecs,
   onGetQuote: _onGetQuote,
 }: ProductCardProps) {
-  const imgSrc =
-    product.imageUrl || "/assets/generated/tractor-744.dim_600x400.jpg";
   const isBestSeller = product.model === BEST_SELLER_MODEL;
 
   const handleGetQuote = () => {
@@ -45,7 +43,7 @@ export default function ProductCard({
 
       <div className="relative overflow-hidden bg-muted h-48">
         <img
-          src={imgSrc}
+          src={product.imageUrl}
           alt={product.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           loading="lazy"

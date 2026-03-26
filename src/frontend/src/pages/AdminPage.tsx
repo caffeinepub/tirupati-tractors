@@ -79,7 +79,10 @@ export default function AdminPage() {
         if (match) {
           return {
             ...match,
-            imageUrl: match.imageUrl || sample.imageUrl,
+            imageUrl:
+              match.imageUrl && !match.imageUrl.startsWith("http")
+                ? match.imageUrl
+                : sample.imageUrl,
           };
         }
       }
@@ -347,10 +350,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <img
-                            src={
-                              p.imageUrl ||
-                              "/assets/generated/tractor-744.dim_600x400.jpg"
-                            }
+                            src={p.imageUrl}
                             alt={p.name}
                             className="h-10 w-14 object-cover rounded"
                           />
