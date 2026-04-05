@@ -36,11 +36,11 @@ function AppShell() {
     isAuthenticated && !profileLoading && isFetched && userProfile === null;
 
   useEffect(() => {
-    // Auto-refresh the page after 24 hours to ensure latest content is shown
-    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+    // Auto-refresh the page after 20 hours to ensure latest content is shown
+    const TWENTY_HOURS = 20 * 60 * 60 * 1000;
     const timer = setTimeout(() => {
       window.location.reload();
-    }, TWENTY_FOUR_HOURS);
+    }, TWENTY_HOURS);
     return () => clearTimeout(timer);
   }, []);
 
